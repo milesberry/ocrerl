@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Exam Reference Language - Blockly Edition</title>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f5f5f5;
+        }
+
+        #header {
+            background: #1e88e5;
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        #header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        #header a {
+            color: #ccc;
+            text-decoration: underline;
+        }
+
+        #container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        #blocklyDiv {
+            flex: 1;
+            min-width: 0;
+        }
+
+        #outputPanel {
+            width: 350px;
+            background: white;
+            border-left: 2px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #controls {
+            padding: 15px;
+            background: #fafafa;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #1e88e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #1976d2;
+        }
+
+        button:active {
+            background: #1565c0;
+        }
+
+        button.secondary {
+            background: #757575;
+        }
+
+        button.secondary:hover {
+            background: #616161;
+        }
+
+        #codeDisplay {
+            flex: 1;
+            overflow: auto;
+            padding: 15px;
+        }
+
+        #codeDisplay h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        #generatedCode {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 100px;
+            color: #333;
+        }
+
+        #outputSection {
+            margin-top: 15px;
+        }
+
+        #output {
+            background: #263238;
+            color: #aed581;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .error {
+            color: #ff5252 !important;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .input-line .prompt-label {
+            color: #81d4fa;
+            white-space: nowrap;
+        }
+
+        .input-line input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #aed581;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 2px 4px;
+            outline: none;
+        }
+
+        .input-line input:focus {
+            border-bottom-color: #81d4fa;
+        }
+
+        #fileControls {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        #fileControls button {
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+
+        #fileInput { display: none; }
+
+        .empty-msg {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #vfsSection { margin-top: 15px; }
+        #vfsSection h3 { margin: 0 0 8px 0; color: #333; font-size: 16px; }
+        #vfsControls { margin-bottom: 8px; }
+        #vfsControls button { padding: 6px 12px; font-size: 12px; }
+        #vfsFileInput { display: none; }
+
+        #vfsFileList {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .vfs-file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 6px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .vfs-file-item:last-child { border-bottom: none; }
+        .vfs-file-item .vfs-name { flex: 1; font-family: 'Courier New', monospace; }
+        .vfs-file-item .vfs-info { color: #888; font-size: 11px; margin: 0 8px; }
+
+        .vfs-file-item button {
+            padding: 2px 8px;
+            font-size: 11px;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>OCR Exam Reference Language - Blockly</h1>
+        <p>Visual programming environment based on <a href="https://www.ocr.org.uk/Images/558027-specification-gcse-computer-science-j277.pdf">OCR GCSE Computer Science specification</a></p>
+    </div>
+
+    <div id="container">
+        <div id="blocklyDiv"></div>
+
+        <div id="outputPanel">
+            <div id="fileControls">
+                <button onclick="downloadProgram()" class="secondary">&#11015; Download</button>
+                <button onclick="document.getElementById('fileInput').click()" class="secondary">&#11014; Upload</button>
+                <input type="file" id="fileInput" accept=".json" onchange="uploadProgram(event)">
+            </div>
+            <div id="controls">
+                <button onclick="runCode()">&#9654; Run Code</button>
+                <button onclick="clearOutput()" class="secondary">Clear Output</button>
+            </div>
+
+            <div id="codeDisplay">
+                <h3>OCR ERL Code:</h3>
+                <div id="generatedCode"></div>
+
+                <div id="outputSection">
+                    <h3>Output:</h3>
+                    <div id="output"></div>
+                </div>
+
+                <div id="vfsSection">
+                    <h3>Virtual File System:</h3>
+                    <div id="vfsControls">
+                        <button onclick="document.getElementById('vfsFileInput').click()" class="secondary">&#11014; Load text file</button>
+                        <input type="file" id="vfsFileInput" accept=".txt,.csv,.dat" onchange="vfsUpload(event)">
+                    </div>
+                    <div id="vfsFileList"><span class="empty-msg">No files loaded</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Blockly workspace
+        let workspace;
+        let outputDiv;
+        let codeDiv;
+        const jsGenerator = javascript.javascriptGenerator;
+
+        // ===========================================
+        // Colour scheme based on OCR spec categories
+        // ===========================================
+        const COLOURS = {
+            COMMENTING:     '#888888',
+            VARIABLES:      '#a55b99',
+            INPUT_OUTPUT:   '#4a90e2',
+            CASTING:        '#e64d4d',
+            OPERATORS:      '#5b80a5',
+            SELECTION:      '#5ba55b',
+            ITERATION:      '#e2a14a',
+            STRING:         '#cc6699',
+            FILE:           '#66aa66',
+            ARRAYS:         '#d97634',
+            SUBPROGRAMS:    '#995ba5',
+            RANDOM:         '#9966cc'
+        };
+
+        // ===========================================
+        // Toolbox - categories match OCR spec
+        // ===========================================
+        const toolbox = {
+            kind: 'categoryToolbox',
+            contents: [
+                {
+                    kind: 'category',
+                    name: 'Commenting',
+                    colour: COLOURS.COMMENTING,
+                    contents: [
+                        { kind: 'block', type: 'comment_block' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Variables',
+                    colour: COLOURS.VARIABLES,
+                    contents: [
+                        { kind: 'block', type: 'variable_assign' },
+                        { kind: 'block', type: 'variable_get' },
+                        { kind: 'block', type: 'constant_declare' },
+                        { kind: 'block', type: 'global_variable' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Input/Output',
+                    colour: COLOURS.INPUT_OUTPUT,
+                    contents: [
+                        { kind: 'block', type: 'input_statement' },
+                        { kind: 'block', type: 'input_statement_var' },
+                        { kind: 'block', type: 'print_literal' },
+                        { kind: 'block', type: 'print_statement' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Casting',
+                    colour: COLOURS.CASTING,
+                    contents: [
+                        { kind: 'block', type: 'type_cast' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Operators and Literals',
+                    colour: COLOURS.OPERATORS,
+                    contents: [
+                        { kind: 'block', type: 'math_number' },
+                        { kind: 'block', type: 'text' },
+                        { kind: 'block', type: 'logic_boolean' },
+                        { kind: 'block', type: 'math_arithmetic' },
+                        { kind: 'block', type: 'math_modulo' },
+                        { kind: 'block', type: 'math_div' },
+                        { kind: 'block', type: 'logic_compare' },
+                        { kind: 'block', type: 'logic_operation' },
+                        { kind: 'block', type: 'logic_negate' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Selection',
+                    colour: COLOURS.SELECTION,
+                    contents: [
+                        { kind: 'block', type: 'if_block' },
+                        { kind: 'block', type: 'if_else_block' },
+                        { kind: 'block', type: 'if_elseif_else_block' },
+                        { kind: 'block', type: 'switch_case' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Iteration',
+                    colour: COLOURS.ITERATION,
+                    contents: [
+                        { kind: 'block', type: 'for_loop_simple' },
+                        { kind: 'block', type: 'for_loop' },
+                        { kind: 'block', type: 'while_loop' },
+                        { kind: 'block', type: 'do_until_loop' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'String Handling',
+                    colour: COLOURS.STRING,
+                    contents: [
+                        { kind: 'block', type: 'string_concat' },
+                        { kind: 'block', type: 'string_length' },
+                        { kind: 'block', type: 'text_substring' },
+                        { kind: 'block', type: 'text_left' },
+                        { kind: 'block', type: 'text_right' },
+                        { kind: 'block', type: 'text_case' },
+                        { kind: 'block', type: 'text_asc' },
+                        { kind: 'block', type: 'text_chr' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'File Handling',
+                    colour: COLOURS.FILE,
+                    contents: [
+                        { kind: 'block', type: 'file_new' },
+                        { kind: 'block', type: 'file_open' },
+                        { kind: 'block', type: 'file_close' },
+                        { kind: 'block', type: 'file_readline' },
+                        { kind: 'block', type: 'file_writeline' },
+                        { kind: 'block', type: 'file_endoffile' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Arrays',
+                    colour: COLOURS.ARRAYS,
+                    contents: [
+                        { kind: 'block', type: 'array_create' },
+                        { kind: 'block', type: 'array_create_values' },
+                        { kind: 'block', type: 'array_create_2d' },
+                        { kind: 'block', type: 'array_get' },
+                        { kind: 'block', type: 'array_set' },
+                        { kind: 'block', type: 'array_get_2d' },
+                        { kind: 'block', type: 'array_set_2d' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Sub Programs',
+                    colour: COLOURS.SUBPROGRAMS,
+                    contents: [
+                        { kind: 'block', type: 'procedure_def' },
+                        { kind: 'block', type: 'procedure_def_var' },
+                        { kind: 'block', type: 'procedure_call' },
+                        { kind: 'block', type: 'procedure_call_var' },
+                        { kind: 'block', type: 'function_def' },
+                        { kind: 'block', type: 'function_def_var' },
+                        { kind: 'block', type: 'function_call' },
+                        { kind: 'block', type: 'function_call_var' }
+                    ]
+                },
+                {
+                    kind: 'category',
+                    name: 'Random Numbers',
+                    colour: COLOURS.RANDOM,
+                    contents: [
+                        { kind: 'block', type: 'math_random' }
+                    ]
+                }
+            ]
+        };
+
+        // ===========================================
+        // Block definitions
+        // ===========================================
+
+        // --- Commenting ---
+        Blockly.Blocks['comment_block'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('//')
+                    .appendField(new Blockly.FieldTextInput('comment'), 'TEXT');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.COMMENTING);
+                this.setTooltip('Add a comment');
+            }
+        };
+
+        // --- Variables ---
+        Blockly.Blocks['variable_assign'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .appendField(new Blockly.FieldVariable('variable'), 'VAR')
+                    .appendField('=');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.VARIABLES);
+                this.setTooltip('Assign a value to a variable');
+            }
+        };
+
+        Blockly.Blocks['variable_get'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldVariable('variable'), 'VAR');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.VARIABLES);
+                this.setTooltip('Get the value of a variable');
+            }
+        };
+
+        Blockly.Blocks['constant_declare'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .appendField('const')
+                    .appendField(new Blockly.FieldVariable('CONSTANT'), 'VAR')
+                    .appendField('=');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.VARIABLES);
+            }
+        };
+
+        Blockly.Blocks['global_variable'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .appendField('global')
+                    .appendField(new Blockly.FieldVariable('variable'), 'VAR')
+                    .appendField('=');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.VARIABLES);
+            }
+        };
+
+        // --- Input/Output ---
+        Blockly.Blocks['input_statement'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('input("')
+                    .appendField(new Blockly.FieldTextInput('Enter value'), 'PROMPT')
+                    .appendField('")');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.INPUT_OUTPUT);
+                this.setTooltip('Get user input');
+            }
+        };
+
+        Blockly.Blocks['input_statement_var'] = {
+            init: function() {
+                this.appendValueInput('PROMPT')
+                    .appendField('input(');
+                this.appendDummyInput()
+                    .appendField(')');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.INPUT_OUTPUT);
+                this.setTooltip('Get user input with variable prompt');
+            }
+        };
+
+        Blockly.Blocks['print_literal'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('print("')
+                    .appendField(new Blockly.FieldTextInput('Hello World'), 'TEXT')
+                    .appendField('")');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.INPUT_OUTPUT);
+                this.setTooltip('Print a literal string');
+            }
+        };
+
+        Blockly.Blocks['print_statement'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .appendField('print(');
+                this.appendDummyInput()
+                    .appendField(')');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.INPUT_OUTPUT);
+                this.setTooltip('Print value to output');
+            }
+        };
+
+        // --- Casting ---
+        Blockly.Blocks['type_cast'] = {
+            init: function() {
+                this.appendValueInput('VALUE')
+                    .appendField(new Blockly.FieldDropdown([
+                        ['str', 'STR'],
+                        ['int', 'INT'],
+                        ['float', 'FLOAT'],
+                        ['real', 'REAL'],
+                        ['bool', 'BOOL']
+                    ]), 'TYPE')
+                    .appendField('(');
+                this.appendDummyInput()
+                    .appendField(')');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.CASTING);
+                this.setTooltip('Convert to another data type');
+            }
+        };
+
+        // --- Operators ---
+        // math_number, text, logic_boolean, logic_operation, logic_negate are Blockly built-ins
+
+        // Custom math_arithmetic with correct symbols (* and /)
+        Blockly.Blocks['math_arithmetic'] = {
+            init: function() {
+                this.appendValueInput('A').setCheck('Number');
+                this.appendValueInput('B').setCheck('Number')
+                    .appendField(new Blockly.FieldDropdown([
+                        ['+', 'ADD'],
+                        ['\u2212', 'MINUS'],
+                        ['*', 'MULTIPLY'],
+                        ['/', 'DIVIDE'],
+                        ['^', 'POWER']
+                    ]), 'OP');
+                this.setOutput(true, 'Number');
+                this.setColour(COLOURS.OPERATORS);
+                this.setTooltip('Arithmetic operation');
+            }
+        };
+
+        // Custom logic_compare with correct labels
+        Blockly.Blocks['logic_compare'] = {
+            init: function() {
+                this.appendValueInput('A');
+                this.appendValueInput('B')
+                    .appendField(new Blockly.FieldDropdown([
+                        ['==', 'EQ'],
+                        ['!=', 'NEQ'],
+                        ['<', 'LT'],
+                        ['<=', 'LTE'],
+                        ['>', 'GT'],
+                        ['>=', 'GTE']
+                    ]), 'OP');
+                this.setOutput(true, 'Boolean');
+                this.setColour(COLOURS.OPERATORS);
+                this.setTooltip('Compare two values');
+            }
+        };
+
+        Blockly.Blocks['math_modulo'] = {
+            init: function() {
+                this.appendValueInput('A').setCheck('Number');
+                this.appendValueInput('B').setCheck('Number').appendField('MOD');
+                this.setOutput(true, 'Number');
+                this.setColour(COLOURS.OPERATORS);
+                this.setTooltip('Modulo operation');
+            }
+        };
+
+        Blockly.Blocks['math_div'] = {
+            init: function() {
+                this.appendValueInput('A').setCheck('Number');
+                this.appendValueInput('B').setCheck('Number').appendField('DIV');
+                this.setOutput(true, 'Number');
+                this.setColour(COLOURS.OPERATORS);
+                this.setTooltip('Integer division (quotient)');
+            }
+        };
+
+        Blockly.Blocks['math_exponent'] = {
+            init: function() {
+                this.appendValueInput('A').setCheck('Number');
+                this.appendValueInput('B').setCheck('Number').appendField('^');
+                this.setOutput(true, 'Number');
+                this.setColour(COLOURS.OPERATORS);
+                this.setTooltip('Exponent / power');
+            }
+        };
+
+        Blockly.Blocks['string_concat'] = {
+            init: function() {
+                this.appendValueInput('A');
+                this.appendValueInput('B').appendField('+');
+                this.setOutput(true, 'String');
+                this.setColour(COLOURS.STRING);
+                this.setTooltip('Concatenate strings using +');
+            }
+        };
+
+        // --- Selection ---
+        // Custom if/elseif/else blocks matching OCR ERL syntax
+        // Three variants provided for simplicity and reliability
+
+        Blockly.Blocks['if_block'] = {
+            init: function() {
+                this.appendValueInput('IF0').setCheck('Boolean').appendField('if');
+                this.appendStatementInput('DO0').appendField('then');
+                this.appendDummyInput('ENDIF').appendField('endif');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SELECTION);
+                this.setTooltip('if...then...endif');
+            }
+        };
+
+        Blockly.Blocks['if_else_block'] = {
+            init: function() {
+                this.appendValueInput('IF0').setCheck('Boolean').appendField('if');
+                this.appendStatementInput('DO0').appendField('then');
+                this.appendStatementInput('ELSE').appendField('else');
+                this.appendDummyInput('ENDIF').appendField('endif');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SELECTION);
+                this.setTooltip('if...then...else...endif');
+            }
+        };
+
+        Blockly.Blocks['if_elseif_else_block'] = {
+            init: function() {
+                this.appendValueInput('IF0').setCheck('Boolean').appendField('if');
+                this.appendStatementInput('DO0').appendField('then');
+                this.appendValueInput('IF1').setCheck('Boolean').appendField('elseif');
+                this.appendStatementInput('DO1').appendField('then');
+                this.appendStatementInput('ELSE').appendField('else');
+                this.appendDummyInput('ENDIF').appendField('endif');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SELECTION);
+                this.setTooltip('if...then...elseif...then...else...endif');
+            }
+        };
+
+        Blockly.Blocks['switch_case'] = {
+            init: function() {
+                this.appendValueInput('EXPR').appendField('switch');
+                this.appendValueInput('CASE0').appendField('case');
+                this.appendStatementInput('DO0');
+                this.appendValueInput('CASE1').appendField('case');
+                this.appendStatementInput('DO1');
+                this.appendValueInput('CASE2').appendField('case');
+                this.appendStatementInput('DO2');
+                this.appendStatementInput('DEFAULT').appendField('default:');
+                this.appendDummyInput().appendField('endswitch');
+                this.setInputsInline(false);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SELECTION);
+                this.setTooltip('Switch/case selection');
+            }
+        };
+
+        // --- Iteration ---
+        Blockly.Blocks['for_loop_simple'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('for')
+                    .appendField(new Blockly.FieldVariable('i'), 'VAR')
+                    .appendField('=');
+                this.appendValueInput('FROM').setCheck('Number');
+                this.appendDummyInput().appendField('to');
+                this.appendValueInput('TO').setCheck('Number');
+                this.appendStatementInput('DO');
+                this.appendDummyInput().appendField('next');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ITERATION);
+                this.setTooltip('for loop (step 1)');
+            }
+        };
+
+        Blockly.Blocks['for_loop'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('for')
+                    .appendField(new Blockly.FieldVariable('i'), 'VAR')
+                    .appendField('=');
+                this.appendValueInput('FROM').setCheck('Number');
+                this.appendDummyInput().appendField('to');
+                this.appendValueInput('TO').setCheck('Number');
+                this.appendDummyInput()
+                    .appendField('step')
+                    .appendField(new Blockly.FieldNumber(1), 'STEP');
+                this.appendStatementInput('DO');
+                this.appendDummyInput().appendField('next');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ITERATION);
+                this.setTooltip('for loop with step');
+            }
+        };
+
+        Blockly.Blocks['while_loop'] = {
+            init: function() {
+                this.appendValueInput('CONDITION').setCheck('Boolean').appendField('while');
+                this.appendStatementInput('DO');
+                this.appendDummyInput().appendField('endwhile');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ITERATION);
+            }
+        };
+
+        Blockly.Blocks['do_until_loop'] = {
+            init: function() {
+                this.appendStatementInput('DO').appendField('do');
+                this.appendValueInput('CONDITION').setCheck('Boolean').appendField('until');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ITERATION);
+            }
+        };
+
+        // --- String Handling ---
+        Blockly.Blocks['string_length'] = {
+            init: function() {
+                this.appendValueInput('TEXT');
+                this.appendDummyInput().appendField('.length');
+                this.setOutput(true, 'Number');
+                this.setColour(COLOURS.STRING);
+                this.setTooltip('Get length of string');
+            }
+        };
+
+        Blockly.Blocks['text_substring'] = {
+            init: function() {
+                this.appendValueInput('TEXT');
+                this.appendValueInput('START').setCheck('Number').appendField('.substring(');
+                this.appendValueInput('LENGTH').setCheck('Number').appendField(',');
+                this.appendDummyInput().appendField(')');
+                this.setOutput(true, 'String');
+                this.setColour(COLOURS.STRING);
+                this.setTooltip('Get substring: starting index, number of characters (0-indexed)');
+            }
+        };
+
+        Blockly.Blocks['text_left'] = {
+            init: function() {
+                this.appendValueInput('TEXT');
+                this.appendValueInput('COUNT').setCheck('Number').appendField('.left(');
+                this.appendDummyInput().appendField(')');
+                this.setOutput(true, 'String');
+                this.setColour(COLOURS.STRING);
+                this.setTooltip('Get first i characters');
+            }
+        };
+
+        Blockly.Blocks['text_right'] = {
+            init: function() {
+                this.appendValueInput('TEXT');
+                this.appendValueInput('COUNT').setCheck('Number').appendField('.right(');
+                this.appendDummyInput().appendField(')');
+                this.setOutput(true, 'String');
+                this.setColour(COLOURS.STRING);
+                this.setTooltip('Get last i characters');
+            }
+        };
+
+        Blockly.Blocks['text_case'] = {
+            init: function() {
+                this.appendValueInput('TEXT');
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldDropdown([
+                        ['.upper', 'UPPER'],
+                        ['.lower', 'LOWER']
+                    ]), 'CASE');
+                this.setOutput(true, 'String');
+                this.setColour(COLOURS.STRING);
+            }
+        };
+
+        Blockly.Blocks['text_asc'] = {
+            init: function() {
+                this.appendValueInput('CHAR').appendField('ASC(');
+                this.appendDummyInput().appendField(')');
+                this.setOutput(true, 'Number');
+                this.setColour(COLOURS.STRING);
+                this.setTooltip('Get ASCII code of character');
+            }
+        };
+
+        Blockly.Blocks['text_chr'] = {
+            init: function() {
+                this.appendValueInput('CODE').setCheck('Number').appendField('CHR(');
+                this.appendDummyInput().appendField(')');
+                this.setOutput(true, 'String');
+                this.setColour(COLOURS.STRING);
+                this.setTooltip('Get character from ASCII code');
+            }
+        };
+
+        // --- File Handling ---
+        Blockly.Blocks['file_new'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('newFile(')
+                    .appendField(new Blockly.FieldTextInput('filename.txt'), 'FILENAME')
+                    .appendField(')');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.FILE);
+            }
+        };
+
+        Blockly.Blocks['file_open'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldVariable('myFile'), 'VAR')
+                    .appendField('= open(')
+                    .appendField(new Blockly.FieldTextInput('filename.txt'), 'FILENAME')
+                    .appendField(')');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.FILE);
+            }
+        };
+
+        Blockly.Blocks['file_close'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldVariable('myFile'), 'VAR')
+                    .appendField('.close()');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.FILE);
+            }
+        };
+
+        Blockly.Blocks['file_readline'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldVariable('myFile'), 'VAR')
+                    .appendField('.readLine()');
+                this.setOutput(true, 'String');
+                this.setColour(COLOURS.FILE);
+            }
+        };
+
+        Blockly.Blocks['file_writeline'] = {
+            init: function() {
+                this.appendValueInput('TEXT')
+                    .appendField(new Blockly.FieldVariable('myFile'), 'VAR')
+                    .appendField('.writeLine(');
+                this.appendDummyInput().appendField(')');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.FILE);
+            }
+        };
+
+        Blockly.Blocks['file_endoffile'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldVariable('myFile'), 'VAR')
+                    .appendField('.endOfFile()');
+                this.setOutput(true, 'Boolean');
+                this.setColour(COLOURS.FILE);
+            }
+        };
+
+        // --- Arrays ---
+        Blockly.Blocks['array_create'] = {
+            init: function() {
+                this.appendValueInput('SIZE').setCheck('Number')
+                    .appendField('array')
+                    .appendField(new Blockly.FieldVariable('myArray'), 'VAR')
+                    .appendField('[');
+                this.appendDummyInput().appendField(']');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ARRAYS);
+                this.setTooltip('Create 1D array with n elements (index 0 to n-1)');
+            }
+        };
+
+        Blockly.Blocks['array_create_values'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('array')
+                    .appendField(new Blockly.FieldVariable('myArray'), 'VAR')
+                    .appendField('= [')
+                    .appendField(new Blockly.FieldTextInput('"a", "b", "c"'), 'VALUES')
+                    .appendField(']');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ARRAYS);
+                this.setTooltip('Create array with values assigned');
+            }
+        };
+
+        Blockly.Blocks['array_create_2d'] = {
+            init: function() {
+                this.appendValueInput('ROWS').setCheck('Number')
+                    .appendField('array')
+                    .appendField(new Blockly.FieldVariable('myArray'), 'VAR')
+                    .appendField('[');
+                this.appendValueInput('COLS').setCheck('Number').appendField(',');
+                this.appendDummyInput().appendField(']');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ARRAYS);
+                this.setTooltip('Create 2D array with rows x cols elements (index 0 to n-1)');
+            }
+        };
+
+        Blockly.Blocks['array_get'] = {
+            init: function() {
+                this.appendValueInput('INDEX').setCheck('Number')
+                    .appendField(new Blockly.FieldVariable('myArray'), 'VAR')
+                    .appendField('[');
+                this.appendDummyInput().appendField(']');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.ARRAYS);
+            }
+        };
+
+        Blockly.Blocks['array_set'] = {
+            init: function() {
+                this.appendValueInput('INDEX').setCheck('Number')
+                    .appendField(new Blockly.FieldVariable('myArray'), 'VAR')
+                    .appendField('[');
+                this.appendValueInput('VALUE').appendField('] =');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ARRAYS);
+            }
+        };
+
+        Blockly.Blocks['array_get_2d'] = {
+            init: function() {
+                this.appendValueInput('ROW').setCheck('Number')
+                    .appendField(new Blockly.FieldVariable('myArray'), 'VAR')
+                    .appendField('[');
+                this.appendValueInput('COL').setCheck('Number').appendField(',');
+                this.appendDummyInput().appendField(']');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.ARRAYS);
+            }
+        };
+
+        Blockly.Blocks['array_set_2d'] = {
+            init: function() {
+                this.appendValueInput('ROW').setCheck('Number')
+                    .appendField(new Blockly.FieldVariable('myArray'), 'VAR')
+                    .appendField('[');
+                this.appendValueInput('COL').setCheck('Number').appendField(',');
+                this.appendValueInput('VALUE').appendField('] =');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.ARRAYS);
+            }
+        };
+
+        // --- Sub Programs ---
+        Blockly.Blocks['procedure_def'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('procedure')
+                    .appendField(new Blockly.FieldTextInput('myProcedure'), 'NAME')
+                    .appendField('(')
+                    .appendField(new Blockly.FieldTextInput(''), 'PARAMS')
+                    .appendField(')');
+                this.appendStatementInput('BODY');
+                this.appendDummyInput().appendField('endprocedure');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+            }
+        };
+
+        Blockly.Blocks['procedure_call'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldTextInput('myProcedure'), 'NAME')
+                    .appendField('(')
+                    .appendField(new Blockly.FieldTextInput(''), 'ARGS')
+                    .appendField(')');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+            }
+        };
+
+        Blockly.Blocks['function_def'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('function')
+                    .appendField(new Blockly.FieldTextInput('myFunction'), 'NAME')
+                    .appendField('(')
+                    .appendField(new Blockly.FieldTextInput(''), 'PARAMS')
+                    .appendField(')');
+                this.appendStatementInput('BODY');
+                this.appendValueInput('RETURN').appendField('return');
+                this.appendDummyInput('ENDFUNC').appendField('endfunction');
+                this.setInputsInline(false);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+            }
+        };
+
+        Blockly.Blocks['function_call'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new Blockly.FieldTextInput('myFunction'), 'NAME')
+                    .appendField('(')
+                    .appendField(new Blockly.FieldTextInput(''), 'ARGS')
+                    .appendField(')');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+            }
+        };
+
+        // --- Sub Programs (variable parameter versions) ---
+        Blockly.Blocks['procedure_def_var'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('procedure')
+                    .appendField(new Blockly.FieldTextInput('myProcedure'), 'NAME')
+                    .appendField('(')
+                    .appendField(new Blockly.FieldVariable('param'), 'PARAM')
+                    .appendField(')');
+                this.appendStatementInput('BODY');
+                this.appendDummyInput().appendField('endprocedure');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+                this.setTooltip('Define procedure with a variable parameter');
+            }
+        };
+
+        Blockly.Blocks['procedure_call_var'] = {
+            init: function() {
+                this.appendValueInput('ARG')
+                    .appendField(new Blockly.FieldTextInput('myProcedure'), 'NAME')
+                    .appendField('(');
+                this.appendDummyInput().appendField(')');
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+                this.setTooltip('Call procedure with a value argument');
+            }
+        };
+
+        Blockly.Blocks['function_def_var'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField('function')
+                    .appendField(new Blockly.FieldTextInput('myFunction'), 'NAME')
+                    .appendField('(')
+                    .appendField(new Blockly.FieldVariable('param'), 'PARAM')
+                    .appendField(')');
+                this.appendStatementInput('BODY');
+                this.appendValueInput('RETURN').appendField('return');
+                this.appendDummyInput('ENDFUNC').appendField('endfunction');
+                this.setInputsInline(false);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+                this.setTooltip('Define function with a variable parameter');
+            }
+        };
+
+        Blockly.Blocks['function_call_var'] = {
+            init: function() {
+                this.appendValueInput('ARG')
+                    .appendField(new Blockly.FieldTextInput('myFunction'), 'NAME')
+                    .appendField('(');
+                this.appendDummyInput().appendField(')');
+                this.setOutput(true, null);
+                this.setColour(COLOURS.SUBPROGRAMS);
+                this.setTooltip('Call function with a value argument');
+            }
+        };
+
+        // --- Random Numbers ---
+        Blockly.Blocks['math_random'] = {
+            init: function() {
+                this.appendValueInput('FROM').setCheck('Number')
+                    .appendField(new Blockly.FieldDropdown([
+                        ['random int', 'INT'],
+                        ['random real', 'REAL']
+                    ]), 'MODE')
+                    .appendField('(');
+                this.appendValueInput('TO').setCheck('Number').appendField(',');
+                this.appendDummyInput().appendField(')');
+                this.setOutput(true, 'Number');
+                this.setColour(COLOURS.RANDOM);
+            }
+        };
+
+        // ===========================================
+        // JavaScript Code Generators (for execution)
+        // ===========================================
+        jsGenerator.forBlock['comment_block'] = function(block) {
+            return `// ${block.getFieldValue('TEXT')}\n`;
+        };
+
+        jsGenerator.forBlock['variable_assign'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '0';
+            return `var ${v} = ${val};\n`;
+        };
+
+        jsGenerator.forBlock['variable_get'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            return [v, jsGenerator.ORDER_ATOMIC];
+        };
+
+        jsGenerator.forBlock['constant_declare'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '0';
+            return `var ${v} = ${val};\n`;
+        };
+
+        jsGenerator.forBlock['global_variable'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '0';
+            return `window.${v} = ${val};\n`;
+        };
+
+        jsGenerator.forBlock['input_statement'] = function(block) {
+            return [`await getInput("${block.getFieldValue('PROMPT')}")`, jsGenerator.ORDER_AWAIT];
+        };
+
+        jsGenerator.forBlock['input_statement_var'] = function(block) {
+            const prompt = jsGenerator.valueToCode(block, 'PROMPT', jsGenerator.ORDER_NONE) || '""';
+            return [`await getInput(${prompt})`, jsGenerator.ORDER_AWAIT];
+        };
+
+        jsGenerator.forBlock['print_literal'] = function(block) {
+            return `print("${block.getFieldValue('TEXT')}");\n`;
+        };
+
+        jsGenerator.forBlock['print_statement'] = function(block) {
+            const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '""';
+            return `print(${val});\n`;
+        };
+
+        jsGenerator.forBlock['type_cast'] = function(block) {
+            const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '0';
+            const map = { 'STR': `String(${val})`, 'INT': `Math.trunc(Number(${val}))`, 'FLOAT': `Number(${val})`, 'REAL': `Number(${val})`, 'BOOL': `Boolean(${val})` };
+            return [map[block.getFieldValue('TYPE')], jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['math_arithmetic'] = function(block) {
+            const ops = {'ADD':['+',jsGenerator.ORDER_ADDITION],'MINUS':['-',jsGenerator.ORDER_SUBTRACTION],'MULTIPLY':['*',jsGenerator.ORDER_MULTIPLICATION],'DIVIDE':['/',jsGenerator.ORDER_DIVISION],'POWER':['**',jsGenerator.ORDER_EXPONENTIATION]};
+            const tuple = ops[block.getFieldValue('OP')] || ['+',jsGenerator.ORDER_ADDITION];
+            const a = jsGenerator.valueToCode(block, 'A', tuple[1]) || '0';
+            const b = jsGenerator.valueToCode(block, 'B', tuple[1]) || '0';
+            return [`${a} ${tuple[0]} ${b}`, tuple[1]];
+        };
+
+        jsGenerator.forBlock['logic_compare'] = function(block) {
+            const ops = {'EQ':'===','NEQ':'!==','LT':'<','LTE':'<=','GT':'>','GTE':'>='};
+            const op = ops[block.getFieldValue('OP')] || '===';
+            const a = jsGenerator.valueToCode(block, 'A', jsGenerator.ORDER_RELATIONAL) || '0';
+            const b = jsGenerator.valueToCode(block, 'B', jsGenerator.ORDER_RELATIONAL) || '0';
+            return [`${a} ${op} ${b}`, jsGenerator.ORDER_RELATIONAL];
+        };
+
+        jsGenerator.forBlock['math_modulo'] = function(block) {
+            const a = jsGenerator.valueToCode(block, 'A', jsGenerator.ORDER_MODULUS) || '0';
+            const b = jsGenerator.valueToCode(block, 'B', jsGenerator.ORDER_MODULUS) || '1';
+            return [`(${a} % ${b})`, jsGenerator.ORDER_MODULUS];
+        };
+
+        jsGenerator.forBlock['math_div'] = function(block) {
+            const a = jsGenerator.valueToCode(block, 'A', jsGenerator.ORDER_DIVISION) || '0';
+            const b = jsGenerator.valueToCode(block, 'B', jsGenerator.ORDER_DIVISION) || '1';
+            return [`Math.trunc(${a} / ${b})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['math_exponent'] = function(block) {
+            const a = jsGenerator.valueToCode(block, 'A', jsGenerator.ORDER_NONE) || '0';
+            const b = jsGenerator.valueToCode(block, 'B', jsGenerator.ORDER_NONE) || '1';
+            return [`Math.pow(${a}, ${b})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['string_concat'] = function(block) {
+            const a = jsGenerator.valueToCode(block, 'A', jsGenerator.ORDER_ADDITION) || '""';
+            const b = jsGenerator.valueToCode(block, 'B', jsGenerator.ORDER_ADDITION) || '""';
+            return [`String(${a}) + String(${b})`, jsGenerator.ORDER_ADDITION];
+        };
+
+        // Shared JS generator for all if variants
+        function jsGenerateIf(block) {
+            let code = '';
+            const cond0 = jsGenerator.valueToCode(block, 'IF0', jsGenerator.ORDER_NONE) || 'false';
+            code += `if (${cond0}) {\n${jsGenerator.statementToCode(block, 'DO0')}`;
+            for (let i = 1; block.getInput('IF' + i); i++) {
+                const condN = jsGenerator.valueToCode(block, 'IF' + i, jsGenerator.ORDER_NONE) || 'false';
+                code += `} else if (${condN}) {\n${jsGenerator.statementToCode(block, 'DO' + i)}`;
+            }
+            if (block.getInput('ELSE')) {
+                code += `} else {\n${jsGenerator.statementToCode(block, 'ELSE')}`;
+            }
+            code += '}\n';
+            return code;
+        }
+        jsGenerator.forBlock['if_block'] = jsGenerateIf;
+        jsGenerator.forBlock['if_else_block'] = jsGenerateIf;
+        jsGenerator.forBlock['if_elseif_else_block'] = jsGenerateIf;
+
+        jsGenerator.forBlock['switch_case'] = function(block) {
+            const expr = jsGenerator.valueToCode(block, 'EXPR', jsGenerator.ORDER_NONE) || '""';
+            let code = `switch (${expr}) {\n`;
+            for (let i = 0; i < 3; i++) {
+                const cv = jsGenerator.valueToCode(block, 'CASE' + i, jsGenerator.ORDER_NONE);
+                if (cv) {
+                    code += `  case ${cv}:\n${jsGenerator.statementToCode(block, 'DO' + i)}    break;\n`;
+                }
+            }
+            const ds = jsGenerator.statementToCode(block, 'DEFAULT');
+            if (ds) code += `  default:\n${ds}`;
+            code += `}\n`;
+            return code;
+        };
+
+        jsGenerator.forBlock['for_loop_simple'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const from = jsGenerator.valueToCode(block, 'FROM', jsGenerator.ORDER_NONE) || '0';
+            const to = jsGenerator.valueToCode(block, 'TO', jsGenerator.ORDER_NONE) || '10';
+            const body = jsGenerator.statementToCode(block, 'DO');
+            return `for (var ${v} = ${from}; ${v} <= ${to}; ${v}++) {\n${body}}\n`;
+        };
+
+        jsGenerator.forBlock['for_loop'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const from = jsGenerator.valueToCode(block, 'FROM', jsGenerator.ORDER_NONE) || '0';
+            const to = jsGenerator.valueToCode(block, 'TO', jsGenerator.ORDER_NONE) || '10';
+            const step = block.getFieldValue('STEP');
+            const body = jsGenerator.statementToCode(block, 'DO');
+            if (Number(step) >= 0) {
+                return `for (let ${v} = ${from}; ${v} <= ${to}; ${v} += ${step}) {\n${body}}\n`;
+            } else {
+                return `for (let ${v} = ${from}; ${v} >= ${to}; ${v} += ${step}) {\n${body}}\n`;
+            }
+        };
+
+        jsGenerator.forBlock['while_loop'] = function(block) {
+            const cond = jsGenerator.valueToCode(block, 'CONDITION', jsGenerator.ORDER_NONE) || 'false';
+            return `while (${cond}) {\n${jsGenerator.statementToCode(block, 'DO')}}\n`;
+        };
+
+        jsGenerator.forBlock['do_until_loop'] = function(block) {
+            const cond = jsGenerator.valueToCode(block, 'CONDITION', jsGenerator.ORDER_NONE) || 'true';
+            return `do {\n${jsGenerator.statementToCode(block, 'DO')}} while (!(${cond}));\n`;
+        };
+
+        jsGenerator.forBlock['string_length'] = function(block) {
+            const t = jsGenerator.valueToCode(block, 'TEXT', jsGenerator.ORDER_MEMBER) || '""';
+            return [`${t}.length`, jsGenerator.ORDER_MEMBER];
+        };
+
+        jsGenerator.forBlock['text_substring'] = function(block) {
+            const t = jsGenerator.valueToCode(block, 'TEXT', jsGenerator.ORDER_MEMBER) || '""';
+            const s = jsGenerator.valueToCode(block, 'START', jsGenerator.ORDER_COMMA) || '0';
+            const l = jsGenerator.valueToCode(block, 'LENGTH', jsGenerator.ORDER_COMMA) || '1';
+            return [`${t}.substr(${s}, ${l})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['text_left'] = function(block) {
+            const t = jsGenerator.valueToCode(block, 'TEXT', jsGenerator.ORDER_MEMBER) || '""';
+            const c = jsGenerator.valueToCode(block, 'COUNT', jsGenerator.ORDER_COMMA) || '1';
+            return [`${t}.substring(0, ${c})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['text_right'] = function(block) {
+            const t = jsGenerator.valueToCode(block, 'TEXT', jsGenerator.ORDER_MEMBER) || '""';
+            const c = jsGenerator.valueToCode(block, 'COUNT', jsGenerator.ORDER_UNARY_NEGATION) || '1';
+            return [`${t}.slice(-${c})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['text_case'] = function(block) {
+            const t = jsGenerator.valueToCode(block, 'TEXT', jsGenerator.ORDER_MEMBER) || '""';
+            const m = block.getFieldValue('CASE') === 'UPPER' ? 'toUpperCase' : 'toLowerCase';
+            return [`${t}.${m}()`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['text_asc'] = function(block) {
+            const c = jsGenerator.valueToCode(block, 'CHAR', jsGenerator.ORDER_MEMBER) || '"A"';
+            return [`${c}.charCodeAt(0)`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['text_chr'] = function(block) {
+            const c = jsGenerator.valueToCode(block, 'CODE', jsGenerator.ORDER_COMMA) || '65';
+            return [`String.fromCharCode(${c})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['file_new'] = function(block) {
+            return `_vfs_newFile("${block.getFieldValue('FILENAME')}");\n`;
+        };
+        jsGenerator.forBlock['file_open'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            return `${v} = _vfs_open("${block.getFieldValue('FILENAME')}");\n`;
+        };
+        jsGenerator.forBlock['file_close'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            return `_vfs_close(${v});\n`;
+        };
+        jsGenerator.forBlock['file_readline'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            return [`_vfs_readLine(${v})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+        jsGenerator.forBlock['file_writeline'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const t = jsGenerator.valueToCode(block, 'TEXT', jsGenerator.ORDER_NONE) || '""';
+            return `_vfs_writeLine(${v}, ${t});\n`;
+        };
+        jsGenerator.forBlock['file_endoffile'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            return [`_vfs_endOfFile(${v})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['array_create'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const size = jsGenerator.valueToCode(block, 'SIZE', jsGenerator.ORDER_NONE) || '5';
+            return `var ${v} = new Array(${size}).fill(null);\n`;
+        };
+        jsGenerator.forBlock['array_create_values'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            return `var ${v} = [${block.getFieldValue('VALUES')}];\n`;
+        };
+        jsGenerator.forBlock['array_create_2d'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const r = jsGenerator.valueToCode(block, 'ROWS', jsGenerator.ORDER_NONE) || '8';
+            const c = jsGenerator.valueToCode(block, 'COLS', jsGenerator.ORDER_NONE) || '8';
+            return `var ${v} = Array.from({length: ${r}}, () => new Array(${c}).fill(null));\n`;
+        };
+        jsGenerator.forBlock['array_get'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const i = jsGenerator.valueToCode(block, 'INDEX', jsGenerator.ORDER_MEMBER) || '0';
+            return [`${v}[${i}]`, jsGenerator.ORDER_MEMBER];
+        };
+        jsGenerator.forBlock['array_set'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const i = jsGenerator.valueToCode(block, 'INDEX', jsGenerator.ORDER_NONE) || '0';
+            const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '0';
+            return `${v}[${i}] = ${val};\n`;
+        };
+        jsGenerator.forBlock['array_get_2d'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const r = jsGenerator.valueToCode(block, 'ROW', jsGenerator.ORDER_MEMBER) || '0';
+            const c = jsGenerator.valueToCode(block, 'COL', jsGenerator.ORDER_MEMBER) || '0';
+            return [`${v}[${r}][${c}]`, jsGenerator.ORDER_MEMBER];
+        };
+        jsGenerator.forBlock['array_set_2d'] = function(block) {
+            const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+            const r = jsGenerator.valueToCode(block, 'ROW', jsGenerator.ORDER_MEMBER) || '0';
+            const c = jsGenerator.valueToCode(block, 'COL', jsGenerator.ORDER_MEMBER) || '0';
+            const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '0';
+            return `${v}[${r}][${c}] = ${val};\n`;
+        };
+
+        jsGenerator.forBlock['procedure_def'] = function(block) {
+            const name = block.getFieldValue('NAME');
+            const params = block.getFieldValue('PARAMS');
+            const body = jsGenerator.statementToCode(block, 'BODY');
+            return `function ${name}(${params}) {\n${body}}\n`;
+        };
+        jsGenerator.forBlock['procedure_call'] = function(block) {
+            return `${block.getFieldValue('NAME')}(${block.getFieldValue('ARGS')});\n`;
+        };
+        jsGenerator.forBlock['function_def'] = function(block) {
+            const name = block.getFieldValue('NAME');
+            const params = block.getFieldValue('PARAMS');
+            const body = jsGenerator.statementToCode(block, 'BODY');
+            const ret = jsGenerator.valueToCode(block, 'RETURN', jsGenerator.ORDER_NONE) || '0';
+            return `function ${name}(${params}) {\n${body}  return ${ret};\n}\n`;
+        };
+        jsGenerator.forBlock['function_call'] = function(block) {
+            return [`${block.getFieldValue('NAME')}(${block.getFieldValue('ARGS')})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['procedure_def_var'] = function(block) {
+            const name = block.getFieldValue('NAME');
+            const param = jsGenerator.nameDB_.getName(block.getFieldValue('PARAM'), Blockly.VARIABLE_CATEGORY_NAME);
+            const body = jsGenerator.statementToCode(block, 'BODY');
+            return `function ${name}(${param}) {\n${body}}\n`;
+        };
+        jsGenerator.forBlock['procedure_call_var'] = function(block) {
+            const arg = jsGenerator.valueToCode(block, 'ARG', jsGenerator.ORDER_NONE) || '0';
+            return `${block.getFieldValue('NAME')}(${arg});\n`;
+        };
+        jsGenerator.forBlock['function_def_var'] = function(block) {
+            const name = block.getFieldValue('NAME');
+            const param = jsGenerator.nameDB_.getName(block.getFieldValue('PARAM'), Blockly.VARIABLE_CATEGORY_NAME);
+            const body = jsGenerator.statementToCode(block, 'BODY');
+            const ret = jsGenerator.valueToCode(block, 'RETURN', jsGenerator.ORDER_NONE) || '0';
+            return `function ${name}(${param}) {\n${body}  return ${ret};\n}\n`;
+        };
+        jsGenerator.forBlock['function_call_var'] = function(block) {
+            const arg = jsGenerator.valueToCode(block, 'ARG', jsGenerator.ORDER_NONE) || '0';
+            return [`${block.getFieldValue('NAME')}(${arg})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        jsGenerator.forBlock['math_random'] = function(block) {
+            const from = jsGenerator.valueToCode(block, 'FROM', jsGenerator.ORDER_COMMA) || '1';
+            const to = jsGenerator.valueToCode(block, 'TO', jsGenerator.ORDER_COMMA) || '6';
+            const mode = block.getFieldValue('MODE');
+            if (mode === 'REAL') {
+                return [`(Math.random() * (${to} - ${from}) + ${from})`, jsGenerator.ORDER_FUNCTION_CALL];
+            }
+            return [`(Math.floor(Math.random() * (${to} - ${from} + 1)) + ${from})`, jsGenerator.ORDER_FUNCTION_CALL];
+        };
+
+        // ===========================================
+        // OCR ERL Display Generator (for code panel)
+        // ===========================================
+        const erlGenerator = new Blockly.Generator('ERL');
+        erlGenerator.INDENT = '    ';
+
+        erlGenerator.init = function(workspace) {
+            if (!erlGenerator.nameDB_) {
+                erlGenerator.nameDB_ = new Blockly.Names(erlGenerator.RESERVED_WORDS_ || '');
+            } else {
+                erlGenerator.nameDB_.reset();
+            }
+            erlGenerator.nameDB_.setVariableMap(workspace.getVariableMap());
+        };
+        erlGenerator.finish = function(code) { return code; };
+        erlGenerator.scrub_ = function(block, code, thisOnly) {
+            const next = block.nextConnection && block.nextConnection.targetBlock();
+            return (next && !thisOnly) ? code + erlGenerator.blockToCode(next) : code;
+        };
+
+        function ev(block, f) {
+            return block.getFieldValue(f)
+                ? erlGenerator.nameDB_.getName(block.getFieldValue(f), Blockly.VARIABLE_CATEGORY_NAME)
+                : 'x';
+        }
+
+        // --- Commenting ---
+        erlGenerator.forBlock['comment_block'] = function(block) {
+            return `// ${block.getFieldValue('TEXT')}\n`;
+        };
+
+        // --- Variables ---
+        erlGenerator.forBlock['variable_assign'] = function(block) {
+            return `${ev(block,'VAR')} = ${erlGenerator.valueToCode(block,'VALUE',0)||'0'}\n`;
+        };
+        erlGenerator.forBlock['variable_get'] = function(block) {
+            return [ev(block,'VAR'), 0];
+        };
+        erlGenerator.forBlock['constant_declare'] = function(block) {
+            return `const ${ev(block,'VAR')} = ${erlGenerator.valueToCode(block,'VALUE',0)||'0'}\n`;
+        };
+        erlGenerator.forBlock['global_variable'] = function(block) {
+            return `global ${ev(block,'VAR')} = ${erlGenerator.valueToCode(block,'VALUE',0)||'0'}\n`;
+        };
+
+        // --- I/O ---
+        erlGenerator.forBlock['input_statement'] = function(block) {
+            return [`input("${block.getFieldValue('PROMPT')}")`, 0];
+        };
+        erlGenerator.forBlock['input_statement_var'] = function(block) {
+            return [`input(${erlGenerator.valueToCode(block,'PROMPT',0)||'""'})`, 0];
+        };
+        erlGenerator.forBlock['print_literal'] = function(block) {
+            return `print("${block.getFieldValue('TEXT')}")\n`;
+        };
+        erlGenerator.forBlock['print_statement'] = function(block) {
+            return `print(${erlGenerator.valueToCode(block,'VALUE',0)||'""'})\n`;
+        };
+
+        // --- Casting ---
+        erlGenerator.forBlock['type_cast'] = function(block) {
+            const m = {'STR':'str','INT':'int','FLOAT':'float','REAL':'real','BOOL':'bool'};
+            return [`${m[block.getFieldValue('TYPE')]}(${erlGenerator.valueToCode(block,'VALUE',0)||'0'})`, 0];
+        };
+
+        // --- Operators ---
+        erlGenerator.forBlock['math_number'] = function(block) {
+            return [String(block.getFieldValue('NUM')), 0];
+        };
+        erlGenerator.forBlock['text'] = function(block) {
+            return [`"${block.getFieldValue('TEXT')||''}"`, 0];
+        };
+        erlGenerator.forBlock['logic_boolean'] = function(block) {
+            return [block.getFieldValue('BOOL')==='TRUE'?'true':'false', 0];
+        };
+        erlGenerator.forBlock['math_arithmetic'] = function(block) {
+            const ops = {'ADD':'+','MINUS':'-','MULTIPLY':'*','DIVIDE':'/','POWER':'^'};
+            const a = erlGenerator.valueToCode(block,'A',0)||'0';
+            const b = erlGenerator.valueToCode(block,'B',0)||'0';
+            return [`${a} ${ops[block.getFieldValue('OP')]||'+'} ${b}`, 0];
+        };
+        erlGenerator.forBlock['math_modulo'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'A',0)||'0'} MOD ${erlGenerator.valueToCode(block,'B',0)||'1'}`, 0];
+        };
+        erlGenerator.forBlock['math_div'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'A',0)||'0'} DIV ${erlGenerator.valueToCode(block,'B',0)||'1'}`, 0];
+        };
+        erlGenerator.forBlock['math_exponent'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'A',0)||'0'} ^ ${erlGenerator.valueToCode(block,'B',0)||'1'}`, 0];
+        };
+        erlGenerator.forBlock['logic_compare'] = function(block) {
+            const ops = {'EQ':'==','NEQ':'!=','LT':'<','LTE':'<=','GT':'>','GTE':'>='};
+            return [`${erlGenerator.valueToCode(block,'A',0)||'0'} ${ops[block.getFieldValue('OP')]||'=='} ${erlGenerator.valueToCode(block,'B',0)||'0'}`, 0];
+        };
+        erlGenerator.forBlock['logic_operation'] = function(block) {
+            const op = block.getFieldValue('OP')==='AND'?'AND':'OR';
+            return [`${erlGenerator.valueToCode(block,'A',0)||'true'} ${op} ${erlGenerator.valueToCode(block,'B',0)||'true'}`, 0];
+        };
+        erlGenerator.forBlock['logic_negate'] = function(block) {
+            return [`NOT ${erlGenerator.valueToCode(block,'BOOL',0)||'true'}`, 0];
+        };
+        erlGenerator.forBlock['string_concat'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'A',0)||'""'} + ${erlGenerator.valueToCode(block,'B',0)||'""'}`, 0];
+        };
+
+        // --- Selection ---
+        // Shared ERL generator for all if variants
+        function erlGenerateIf(block) {
+            let code = '';
+            let cond = erlGenerator.valueToCode(block,'IF0',0)||'true';
+            code += `if ${cond} then\n${erlGenerator.statementToCode(block,'DO0')}`;
+            for (let i=1; block.getInput('IF'+i); i++) {
+                cond = erlGenerator.valueToCode(block,'IF'+i,0)||'true';
+                code += `elseif ${cond} then\n${erlGenerator.statementToCode(block,'DO'+i)}`;
+            }
+            if (block.getInput('ELSE')) {
+                code += `else\n${erlGenerator.statementToCode(block,'ELSE')}`;
+            }
+            code += 'endif\n';
+            return code;
+        }
+        erlGenerator.forBlock['if_block'] = erlGenerateIf;
+        erlGenerator.forBlock['if_else_block'] = erlGenerateIf;
+        erlGenerator.forBlock['if_elseif_else_block'] = erlGenerateIf;
+        erlGenerator.forBlock['switch_case'] = function(block) {
+            const ind = erlGenerator.INDENT;
+            const expr = erlGenerator.valueToCode(block,'EXPR',0)||'""';
+            let code = `switch ${expr}:\n`;
+            for (let i=0; i<3; i++) {
+                const cv = erlGenerator.valueToCode(block,'CASE'+i,0);
+                if (cv) {
+                    code += `${ind}case ${cv}:\n`;
+                    const body = erlGenerator.statementToCode(block,'DO'+i);
+                    if (body) code += body.replace(/^(    )/gm, ind + ind);
+                }
+            }
+            const db = erlGenerator.statementToCode(block,'DEFAULT');
+            if (db) {
+                code += `${ind}default:\n`;
+                code += db.replace(/^(    )/gm, ind + ind);
+            }
+            code += 'endswitch\n';
+            return code;
+        };
+
+        // --- Iteration ---
+        erlGenerator.forBlock['for_loop_simple'] = function(block) {
+            const v = ev(block,'VAR');
+            const from = erlGenerator.valueToCode(block,'FROM',0)||'0';
+            const to = erlGenerator.valueToCode(block,'TO',0)||'10';
+            return `for ${v} = ${from} to ${to}\n${erlGenerator.statementToCode(block,'DO')}next ${v}\n`;
+        };
+
+        erlGenerator.forBlock['for_loop'] = function(block) {
+            const v = ev(block,'VAR');
+            const from = erlGenerator.valueToCode(block,'FROM',0)||'0';
+            const to = erlGenerator.valueToCode(block,'TO',0)||'10';
+            const step = block.getFieldValue('STEP');
+            let h = `for ${v} = ${from} to ${to}`;
+            if (step && String(step)!=='1') h += ` step ${step}`;
+            return `${h}\n${erlGenerator.statementToCode(block,'DO')}next ${v}\n`;
+        };
+        erlGenerator.forBlock['while_loop'] = function(block) {
+            return `while ${erlGenerator.valueToCode(block,'CONDITION',0)||'false'}\n${erlGenerator.statementToCode(block,'DO')}endwhile\n`;
+        };
+        erlGenerator.forBlock['do_until_loop'] = function(block) {
+            return `do\n${erlGenerator.statementToCode(block,'DO')}until ${erlGenerator.valueToCode(block,'CONDITION',0)||'true'}\n`;
+        };
+
+        // --- String Handling ---
+        erlGenerator.forBlock['string_length'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'TEXT',0)||'""'}.length`, 0];
+        };
+        erlGenerator.forBlock['text_substring'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'TEXT',0)||'""'}.substring(${erlGenerator.valueToCode(block,'START',0)||'0'}, ${erlGenerator.valueToCode(block,'LENGTH',0)||'1'})`, 0];
+        };
+        erlGenerator.forBlock['text_left'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'TEXT',0)||'""'}.left(${erlGenerator.valueToCode(block,'COUNT',0)||'1'})`, 0];
+        };
+        erlGenerator.forBlock['text_right'] = function(block) {
+            return [`${erlGenerator.valueToCode(block,'TEXT',0)||'""'}.right(${erlGenerator.valueToCode(block,'COUNT',0)||'1'})`, 0];
+        };
+        erlGenerator.forBlock['text_case'] = function(block) {
+            const m = block.getFieldValue('CASE')==='UPPER'?'.upper':'.lower';
+            return [`${erlGenerator.valueToCode(block,'TEXT',0)||'""'}${m}`, 0];
+        };
+        erlGenerator.forBlock['text_asc'] = function(block) {
+            return [`ASC(${erlGenerator.valueToCode(block,'CHAR',0)||'"A"'})`, 0];
+        };
+        erlGenerator.forBlock['text_chr'] = function(block) {
+            return [`CHR(${erlGenerator.valueToCode(block,'CODE',0)||'65'})`, 0];
+        };
+
+        // --- File Handling ---
+        erlGenerator.forBlock['file_new'] = function(block) {
+            return `newFile("${block.getFieldValue('FILENAME')}")\n`;
+        };
+        erlGenerator.forBlock['file_open'] = function(block) {
+            return `${ev(block,'VAR')} = open("${block.getFieldValue('FILENAME')}")\n`;
+        };
+        erlGenerator.forBlock['file_close'] = function(block) {
+            return `${ev(block,'VAR')}.close()\n`;
+        };
+        erlGenerator.forBlock['file_readline'] = function(block) {
+            return [`${ev(block,'VAR')}.readLine()`, 0];
+        };
+        erlGenerator.forBlock['file_writeline'] = function(block) {
+            return `${ev(block,'VAR')}.writeLine(${erlGenerator.valueToCode(block,'TEXT',0)||'""'})\n`;
+        };
+        erlGenerator.forBlock['file_endoffile'] = function(block) {
+            return [`${ev(block,'VAR')}.endOfFile()`, 0];
+        };
+
+        // --- Arrays ---
+        erlGenerator.forBlock['array_create'] = function(block) {
+            const size = erlGenerator.valueToCode(block,'SIZE',0)||'5';
+            return `array ${ev(block,'VAR')}[${size}]\n`;
+        };
+        erlGenerator.forBlock['array_create_values'] = function(block) {
+            return `array ${ev(block,'VAR')} = [${block.getFieldValue('VALUES')}]\n`;
+        };
+        erlGenerator.forBlock['array_create_2d'] = function(block) {
+            const r = erlGenerator.valueToCode(block,'ROWS',0)||'8';
+            const c = erlGenerator.valueToCode(block,'COLS',0)||'8';
+            return `array ${ev(block,'VAR')}[${r},${c}]\n`;
+        };
+        erlGenerator.forBlock['array_get'] = function(block) {
+            return [`${ev(block,'VAR')}[${erlGenerator.valueToCode(block,'INDEX',0)||'0'}]`, 0];
+        };
+        erlGenerator.forBlock['array_set'] = function(block) {
+            return `${ev(block,'VAR')}[${erlGenerator.valueToCode(block,'INDEX',0)||'0'}] = ${erlGenerator.valueToCode(block,'VALUE',0)||'0'}\n`;
+        };
+        erlGenerator.forBlock['array_get_2d'] = function(block) {
+            return [`${ev(block,'VAR')}[${erlGenerator.valueToCode(block,'ROW',0)||'0'},${erlGenerator.valueToCode(block,'COL',0)||'0'}]`, 0];
+        };
+        erlGenerator.forBlock['array_set_2d'] = function(block) {
+            return `${ev(block,'VAR')}[${erlGenerator.valueToCode(block,'ROW',0)||'0'},${erlGenerator.valueToCode(block,'COL',0)||'0'}] = ${erlGenerator.valueToCode(block,'VALUE',0)||'0'}\n`;
+        };
+
+        // --- Sub Programs ---
+        erlGenerator.forBlock['procedure_def'] = function(block) {
+            return `procedure ${block.getFieldValue('NAME')}(${block.getFieldValue('PARAMS')})\n${erlGenerator.statementToCode(block,'BODY')}endprocedure\n`;
+        };
+        erlGenerator.forBlock['procedure_call'] = function(block) {
+            return `${block.getFieldValue('NAME')}(${block.getFieldValue('ARGS')})\n`;
+        };
+        erlGenerator.forBlock['function_def'] = function(block) {
+            const ret = erlGenerator.valueToCode(block,'RETURN',0)||'0';
+            return `function ${block.getFieldValue('NAME')}(${block.getFieldValue('PARAMS')})\n${erlGenerator.statementToCode(block,'BODY')}${erlGenerator.INDENT}return ${ret}\nendfunction\n`;
+        };
+        erlGenerator.forBlock['function_call'] = function(block) {
+            return [`${block.getFieldValue('NAME')}(${block.getFieldValue('ARGS')})`, 0];
+        };
+
+        erlGenerator.forBlock['procedure_def_var'] = function(block) {
+            const param = ev(block,'PARAM');
+            return `procedure ${block.getFieldValue('NAME')}(${param})\n${erlGenerator.statementToCode(block,'BODY')}endprocedure\n`;
+        };
+        erlGenerator.forBlock['procedure_call_var'] = function(block) {
+            const arg = erlGenerator.valueToCode(block,'ARG',0)||'0';
+            return `${block.getFieldValue('NAME')}(${arg})\n`;
+        };
+        erlGenerator.forBlock['function_def_var'] = function(block) {
+            const param = ev(block,'PARAM');
+            const ret = erlGenerator.valueToCode(block,'RETURN',0)||'0';
+            return `function ${block.getFieldValue('NAME')}(${param})\n${erlGenerator.statementToCode(block,'BODY')}${erlGenerator.INDENT}return ${ret}\nendfunction\n`;
+        };
+        erlGenerator.forBlock['function_call_var'] = function(block) {
+            const arg = erlGenerator.valueToCode(block,'ARG',0)||'0';
+            return [`${block.getFieldValue('NAME')}(${arg})`, 0];
+        };
+
+        // --- Random ---
+        erlGenerator.forBlock['math_random'] = function(block) {
+            return [`random(${erlGenerator.valueToCode(block,'FROM',0)||'1'}, ${erlGenerator.valueToCode(block,'TO',0)||'6'})`, 0];
+        };
+
+        // ===========================================
+        // Initialize
+        // ===========================================
+        function init() {
+            workspace = Blockly.inject('blocklyDiv', {
+                toolbox: toolbox,
+                scrollbars: true,
+                trashcan: true,
+                zoom: {
+                    controls: true,
+                    wheel: true,
+                    startScale: 1.0,
+                    maxScale: 3,
+                    minScale: 0.3,
+                    scaleSpeed: 1.2
+                },
+                grid: {
+                    spacing: 20,
+                    length: 3,
+                    colour: '#ccc',
+                    snap: true
+                }
+            });
+
+            outputDiv = document.getElementById('output');
+            codeDiv = document.getElementById('generatedCode');
+            workspace.addChangeListener(showCode);
+        }
+
+        let _paramTimer = null;
+        function ensureParamVariables() {
+            if (_paramTimer) clearTimeout(_paramTimer);
+            _paramTimer = setTimeout(function() {
+                if (!workspace) return;
+                const blocks = workspace.getBlocksByType('procedure_def')
+                    .concat(workspace.getBlocksByType('function_def'));
+                blocks.forEach(function(block) {
+                    const params = block.getFieldValue('PARAMS');
+                    if (!params) return;
+                    params.split(',').forEach(function(p) {
+                        const name = p.trim();
+                        if (name && !workspace.getVariable(name)) {
+                            workspace.createVariable(name);
+                        }
+                    });
+                });
+            }, 1000);
+        }
+
+        function showCode() {
+            ensureParamVariables();
+            try {
+                const code = erlGenerator.workspaceToCode(workspace);
+                codeDiv.textContent = code || '// Drag blocks here to create your program';
+            } catch(e) {
+                codeDiv.textContent = '// Error: ' + e.message;
+            }
+        }
+
+        function print(value) {
+            const line = document.createElement('div');
+            line.textContent = String(value);
+            outputDiv.appendChild(line);
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
+
+        function getInput(prompt) {
+            return new Promise((resolve) => {
+                const row = document.createElement('div');
+                row.className = 'input-line';
+                const label = document.createElement('span');
+                label.className = 'prompt-label';
+                label.textContent = prompt;
+                const field = document.createElement('input');
+                field.type = 'text';
+                field.autocomplete = 'off';
+                row.appendChild(label);
+                row.appendChild(field);
+                outputDiv.appendChild(row);
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+                field.focus();
+                field.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const value = field.value;
+                        field.remove();
+                        const echo = document.createElement('span');
+                        echo.style.color = '#fff';
+                        echo.textContent = value;
+                        row.appendChild(echo);
+                        resolve(value);
+                    }
+                });
+            });
+        }
+
+        // Virtual File System
+        let _vfs = {};
+        function _vfs_newFile(f) { _vfs[f] = {lines:[],cursor:0,open:false}; }
+        function _vfs_open(f) {
+            if (!_vfs[f]) _vfs[f] = {lines:[],cursor:0,open:true};
+            else { _vfs[f].open=true; _vfs[f].cursor=0; }
+            return f;
+        }
+        function _vfs_close(h) { if(_vfs[h]) _vfs[h].open=false; }
+        function _vfs_readLine(h) {
+            if(!_vfs[h]) throw new Error('File not found: '+h);
+            if(!_vfs[h].open) throw new Error('File not open: '+h);
+            if(_vfs[h].cursor>=_vfs[h].lines.length) return '';
+            return _vfs[h].lines[_vfs[h].cursor++];
+        }
+        function _vfs_writeLine(h,t) {
+            if(!_vfs[h]) throw new Error('File not found: '+h);
+            if(!_vfs[h].open) throw new Error('File not open: '+h);
+            _vfs[h].lines.push(String(t));
+        }
+        function _vfs_endOfFile(h) {
+            if(!_vfs[h]) return true;
+            return _vfs[h].cursor>=_vfs[h].lines.length;
+        }
+
+        async function runCode() {
+            clearOutput();
+            try {
+                const code = jsGenerator.workspaceToCode(workspace);
+                if (!code.trim()) { print('No code to run. Add blocks to your workspace!'); return; }
+                await eval(`(async function() {\n${code}\n})()`);
+            } catch (error) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.textContent = 'Error: ' + error.message;
+                outputDiv.appendChild(errorDiv);
+            }
+            refreshVfsUI();
+        }
+
+        function clearOutput() { outputDiv.innerHTML = ''; }
+
+        // ===========================================
+        // Virtual File System UI
+        // ===========================================
+        function refreshVfsUI() {
+            const list = document.getElementById('vfsFileList');
+            const names = Object.keys(_vfs);
+            if (names.length === 0) {
+                list.innerHTML = '<span class="empty-msg">No files loaded</span>';
+                return;
+            }
+            list.innerHTML = '';
+            names.forEach(function(name) {
+                const item = document.createElement('div');
+                item.className = 'vfs-file-item';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'vfs-name';
+                nameSpan.textContent = name;
+
+                const info = document.createElement('span');
+                info.className = 'vfs-info';
+                info.textContent = _vfs[name].lines.length + ' lines';
+
+                const dlBtn = document.createElement('button');
+                dlBtn.className = 'secondary';
+                dlBtn.textContent = '\u2b07';
+                dlBtn.title = 'Download';
+                dlBtn.onclick = function() { vfsDownload(name); };
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'delete-btn';
+                delBtn.textContent = '\u00d7';
+                delBtn.title = 'Remove';
+                delBtn.style.cssText = 'background:none;border:none;color:#e53935;cursor:pointer;font-size:14px;padding:2px 6px;';
+                delBtn.onclick = function() { delete _vfs[name]; refreshVfsUI(); };
+
+                item.appendChild(nameSpan);
+                item.appendChild(info);
+                item.appendChild(dlBtn);
+                item.appendChild(delBtn);
+                list.appendChild(item);
+            });
+        }
+
+        function vfsUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split(/\r?\n/);
+                // Remove trailing empty line from final newline
+                if (lines.length > 0 && lines[lines.length - 1] === '') lines.pop();
+                _vfs[file.name] = { lines: lines, cursor: 0, open: false };
+                refreshVfsUI();
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function vfsDownload(name) {
+            if (!_vfs[name]) return;
+            const text = _vfs[name].lines.join('\n') + '\n';
+            const blob = new Blob([text], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }
+
+        // ===========================================
+        // Download / Upload Programs
+        // ===========================================
+        function downloadProgram() {
+            const state = Blockly.serialization.workspaces.save(workspace);
+            const json = JSON.stringify(state, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'program.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }
+
+        function uploadProgram(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const state = JSON.parse(e.target.result);
+                    workspace.clear();
+                    Blockly.serialization.workspaces.load(state, workspace);
+                    showCode();
+                } catch(err) {
+                    alert('Error loading file: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // reset so same file can be re-uploaded
+        }
+
+
+        window.addEventListener('load', init);
+    </script>
+
+</body>
+</html>
