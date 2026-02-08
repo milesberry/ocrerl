@@ -4,6 +4,8 @@ A visual programming environment for OCR GCSE Computer Science's Exam Reference 
 
 Students drag and drop blocks to build programs that mirror OCR ERL syntax. The editor generates live pseudocode, executes programs in the browser, and requires no installation -- just open `index.html`.
 
+![Screenshot](screenshot.png)
+
 ## Getting Started
 
 Open `index.html` in any modern web browser. No server or build step required. Blockly is loaded from a CDN, so an internet connection is needed on first load.
