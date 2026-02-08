@@ -64,7 +64,9 @@ Files in the VFS persist across multiple runs.
 
 This tool is based on the OCR GCSE Computer Science (J277) specification. The Exam Reference Language is defined in the [OCR specification document](https://www.ocr.org.uk/Images/558027-specification-gcse-computer-science-j277.pdf).
 
-Built with [Google Blockly](https://developers.google.com/blockly).
+Built with [Google Blockly](https://developers.google.com/blockly).\
+
+This is a collaboration between [Claude Code](https://code.claude.com/docs/en/overview) and Miles Berry. [Read more](colophon.md) about how we worked together.
 
 ## Contributing
 
