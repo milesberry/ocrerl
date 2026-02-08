@@ -1,0 +1,140 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "variable_assign",
+        "id": "W|Cp`RAr(4-27XowUj[1",
+        "x": 130,
+        "y": 90,
+        "fields": {
+          "VAR": {
+            "id": "tJ@*+W9)7_3OZ4!CDVK}"
+          }
+        },
+        "inputs": {
+          "VALUE": {
+            "block": {
+              "type": "input_statement",
+              "id": "]BQyW_l`da;ID/sv[uUc",
+              "fields": {
+                "PROMPT": "Type your answer"
+              }
+            }
+          }
+        },
+        "next": {
+          "block": {
+            "type": "if_elseif_else_block",
+            "id": "mQWg+zl-|VDWOh(ohDWt",
+            "inputs": {
+              "IF0": {
+                "block": {
+                  "type": "logic_compare",
+                  "id": "r91yru^@klSwke@a#pne",
+                  "fields": {
+                    "OP": "EQ"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "variable_get",
+                        "id": "0WP+RH`I}1nIvvrq8.ce",
+                        "fields": {
+                          "VAR": {
+                            "id": "tJ@*+W9)7_3OZ4!CDVK}"
+                          }
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "text",
+                        "id": "d5[!)~+U(KD8M1YRjE|=",
+                        "fields": {
+                          "TEXT": "Yes"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "DO0": {
+                "block": {
+                  "type": "print_literal",
+                  "id": "hNwshw|dQ$9;5;OScQMS",
+                  "fields": {
+                    "TEXT": "Correct"
+                  }
+                }
+              },
+              "IF1": {
+                "block": {
+                  "type": "logic_compare",
+                  "id": "e@e61U|lkjlKYo+9v3uj",
+                  "fields": {
+                    "OP": "EQ"
+                  },
+                  "inputs": {
+                    "A": {
+                      "block": {
+                        "type": "variable_get",
+                        "id": "iu$oceiFnWez/o,@H6]k",
+                        "fields": {
+                          "VAR": {
+                            "id": "tJ@*+W9)7_3OZ4!CDVK}"
+                          }
+                        }
+                      }
+                    },
+                    "B": {
+                      "block": {
+                        "type": "text",
+                        "id": "_[(ci2GOx~5hTP{anUG_",
+                        "fields": {
+                          "TEXT": "No"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "DO1": {
+                "block": {
+                  "type": "print_literal",
+                  "id": "l[x`#[-.rN.Blu)8H{Q9",
+                  "fields": {
+                    "TEXT": "Wrong"
+                  }
+                }
+              },
+              "ELSE": {
+                "block": {
+                  "type": "print_literal",
+                  "id": "ss6*V#o.(h[0~WH)kOcV",
+                  "fields": {
+                    "TEXT": "Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "variables": [
+    {
+      "name": "i",
+      "id": "7rjL]qz@h^DWkHwLS{LA"
+    },
+    {
+      "name": "answer",
+      "id": "tJ@*+W9)7_3OZ4!CDVK}"
+    },
+    {
+      "name": "variable",
+      "id": "Gf0HV[oJmR7*x~3=|;Y{"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "variable_assign",
+        "id": "W|Cp`RAr(4-27XowUj[1",
+        "x": 130,
+        "y": 90,
+        "fields": {
+          "VAR": {
+            "id": "tJ@*+W9)7_3OZ4!CDVK}"
+          }
+        },
+        "inputs": {
+          "VALUE": {
+            "block": {
+              "type": "input_statement",
+              "id": "]BQyW_l`da;ID/sv[uUc",
+              "fields": {
+                "PROMPT": "Which day?"
+              }
+            }
+          }
+        },
+        "next": {
+          "block": {
+            "type": "switch_case",
+            "id": ")QHGe!YGNGu(+9(qTAWA",
+            "inputs": {
+              "EXPR": {
+                "block": {
+                  "type": "variable_get",
+                  "id": "IMxItzC38qWO$GXjp`(0",
+                  "fields": {
+                    "VAR": {
+                      "id": "tJ@*+W9)7_3OZ4!CDVK}"
+                    }
+                  }
+                }
+              },
+              "CASE0": {
+                "block": {
+                  "type": "text",
+                  "id": "?*e;szVF)`WFW{~Da@c5",
+                  "fields": {
+                    "TEXT": "Sat"
+                  }
+                }
+              },
+              "DO0": {
+                "block": {
+                  "type": "print_literal",
+                  "id": "TfMZa];*Q|}1s%qt[/pJ",
+                  "fields": {
+                    "TEXT": "Saturday"
+                  }
+                }
+              },
+              "CASE1": {
+                "block": {
+                  "type": "text",
+                  "id": "MiO]FBZ(/:mu|u-unP6c",
+                  "fields": {
+                    "TEXT": "Sun"
+                  }
+                }
+              },
+              "DO1": {
+                "block": {
+                  "type": "print_literal",
+                  "id": ":n%VYd)G(?tLQLl%9rE#",
+                  "fields": {
+                    "TEXT": "Sunday"
+                  }
+                }
+              },
+              "DEFAULT": {
+                "block": {
+                  "type": "print_literal",
+                  "id": "La:bMe,o,t,MYHu7Sq[E",
+                  "fields": {
+                    "TEXT": "Weekday"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "variables": [
+    {
+      "name": "i",
+      "id": "7rjL]qz@h^DWkHwLS{LA"
+    },
+    {
+      "name": "day",
+      "id": "tJ@*+W9)7_3OZ4!CDVK}"
+    },
+    {
+      "name": "variable",
+      "id": "Gf0HV[oJmR7*x~3=|;Y{"
+    }
+  ]
+}

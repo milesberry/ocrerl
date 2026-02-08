@@ -2,15 +2,15 @@
 
 ## How This Project Was Built
 
-This OCR Exam Reference Language editor was developed collaboratively between a human developer and Claude (Anthropic's AI assistant), working together through Claude Code -- Anthropic's command-line tool for AI-assisted software development.
+This OCR Exam Reference Language editor was developed collaboratively between a human developer (Miles Berry, Roehampton's Professor of Computing Education) and Claude (Anthropic's AI assistant), working together through Claude Code -- Anthropic's command-line tool for AI-assisted software development.
 
 ## Development Process
 
-The project was built in a single extended session, evolving through rapid iteration and conversation. The human developer provided the requirements, design direction, and quality assurance; Claude wrote the code.
+The project was built in a single extended session, evolving through rapid iteration and conversation. Miles provided the requirements, design direction, and quality assurance; Claude wrote the code.
 
 ### Starting Point
 
-The project began with a broken prototype -- a Blockly-based editor that had stopped working due to an API change in Blockly v12. The initial task was simply to fix the error message: *"JavaScript generator does not know how to generate code for block type 'print_statement'"*. This turned out to be a namespace change in Blockly's generator API, where `Blockly.JavaScript` had been replaced by a separate module.
+The project began with a broken prototype, itself created by the Claude chatbot whilst Miles enjoyed Shakshouka and a chai latte in [Megan's by the Castle](https://megans.co.uk/locations/megans-by-the-castle/), Guildford. This was a Blockly-based editor that had stopped working due to an API change in Blockly v12. The initial task was simply to fix the error message: *"JavaScript generator does not know how to generate code for block type 'print_statement'"*. This turned out to be a namespace change in Blockly's generator API, where `Blockly.JavaScript` had been replaced by a separate module.
 
 ### Feature Development
 
@@ -29,6 +29,8 @@ The bulk of the development time was spent on iterative refinement, driven by th
 - **Block variant strategy** -- a pattern emerged of providing both "literal" and "expression" versions of blocks (input, print, procedure/function definitions and calls). The literal versions are simpler for beginners; the expression versions accept plugged-in blocks for more advanced use.
 
 - **Bug fixing through use** -- several issues were caught through testing, including: `const` declarations causing redeclaration errors on re-run (fixed by generating `var` instead), procedure parameter fields creating spurious variables on every keystroke (fixed by debouncing variable creation), and Blockly's built-in operator blocks showing wrong symbols (`x` and `÷` instead of `*` and `/`).
+
+Pro subscription usage limits were hit four times, with development resuming after the enforced, but appreciated, break.
 
 ### Save/Load and File System
 

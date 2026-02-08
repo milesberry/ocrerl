@@ -2,13 +2,20 @@
 
 A visual programming environment for OCR GCSE Computer Science's Exam Reference Language (ERL), built with [Blockly](https://developers.google.com/blockly).
 
+The editor is **not** endorsed by OCR. The programming requirement of the spcification states (emphasis added):
+> Each task(s) must use one or more high-level *textbased*
+programming language, either to a specification
+or to solve a problem (or problems). 
+
+The editor is provided as is, without any representations, warranty or endorsments. Use at your own risk.
+
 Students drag and drop blocks to build programs that mirror OCR ERL syntax. The editor generates live pseudocode, executes programs in the browser, and requires no installation -- just open `index.html`.
 
 ![Screenshot](screenshot.png)
 
 ## Getting Started
 
-Open `index.html` in any modern web browser. No server or build step required. Blockly is loaded from a CDN, so an internet connection is needed on first load.
+Open `index.html` in any modern web browser. No server or build step required. Blockly is loaded from a CDN, so an internet connection is needed on first load. It should be possible to modify this to run entirely locally.
 
 ## Features
 
@@ -54,11 +61,12 @@ Files in the VFS persist across multiple runs.
 
 ## Usage Tips
 
-- Most block types come in two variants: a **literal** version (type directly into the block) and an **expression** version (plug in other blocks). Use whichever suits the task.
+- Most block types come in two variants: a **literal** version (type directly into the block, for simplicity) and an **expression** version (plug in other blocks, for flexibility). Use whichever suits the task.
 - For procedures and functions, type parameter names separated by commas in the literal version, or use the variable-parameter version for a single parameter picked from the variable dropdown.
 - The `for` loop comes in two forms: a simple version (step of 1) and a version with a configurable step value.
 - The `random` block has a dropdown to choose between integer and real output.
 - Arrays are 0-indexed. `array colours[5]` creates 5 elements with indices 0 to 4.
+- A few [examples programs](examples) (as .json files) are available.
 
 ## Acknowledgements
 
@@ -73,5 +81,7 @@ This is a collaboration between [Claude Code](https://code.claude.com/docs/en/ov
 This project is a single HTML file (`index.html`) containing all CSS, HTML, and JavaScript. Contributions and improvements are welcome.
 
 ## Licence
+
+© Miles Berry, 2026
 
 This project is licensed under the [MIT License](LICENSE).

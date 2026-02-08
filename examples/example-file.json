@@ -1,0 +1,200 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "file_open",
+        "id": "`={n9MueSQ-Z;U~y^tzd",
+        "x": 70,
+        "y": 90,
+        "fields": {
+          "VAR": {
+            "id": "Gf0HV[oJmR7*x~3=|;Y{"
+          },
+          "FILENAME": "example.txt"
+        },
+        "next": {
+          "block": {
+            "type": "file_new",
+            "id": "|(xv_!MPiXX/F:dZ6dh2",
+            "fields": {
+              "FILENAME": "newfile.txt"
+            },
+            "next": {
+              "block": {
+                "type": "file_open",
+                "id": "2xM3?OY^?J.ewg!^6a`a",
+                "fields": {
+                  "VAR": {
+                    "id": "7rjL]qz@h^DWkHwLS{LA"
+                  },
+                  "FILENAME": "newfile.txt"
+                },
+                "next": {
+                  "block": {
+                    "type": "while_loop",
+                    "id": "*UbyeH9-f[faaM;X9;mY",
+                    "inputs": {
+                      "CONDITION": {
+                        "block": {
+                          "type": "logic_negate",
+                          "id": "Kvl/tK2]SO6x@wpi+:H/",
+                          "inputs": {
+                            "BOOL": {
+                              "block": {
+                                "type": "file_endoffile",
+                                "id": "*,7ciY]L],`/Ls@oTbzQ",
+                                "fields": {
+                                  "VAR": {
+                                    "id": "Gf0HV[oJmR7*x~3=|;Y{"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "DO": {
+                        "block": {
+                          "type": "variable_assign",
+                          "id": "0h3*L]p)yF/f~uH!AT;.",
+                          "fields": {
+                            "VAR": {
+                              "id": "E*V.[#4w6SMCIWVT]L$h"
+                            }
+                          },
+                          "inputs": {
+                            "VALUE": {
+                              "block": {
+                                "type": "file_readline",
+                                "id": "X#8DD-?d~%GV;o5tKkg-",
+                                "fields": {
+                                  "VAR": {
+                                    "id": "Gf0HV[oJmR7*x~3=|;Y{"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "next": {
+                            "block": {
+                              "type": "print_statement",
+                              "id": "]L+MCFX8IY!*nR)BlV~C",
+                              "inputs": {
+                                "VALUE": {
+                                  "block": {
+                                    "type": "variable_get",
+                                    "id": "O}c%;GMz3T6rflC/IFH_",
+                                    "fields": {
+                                      "VAR": {
+                                        "id": "E*V.[#4w6SMCIWVT]L$h"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "next": {
+                                "block": {
+                                  "type": "file_writeline",
+                                  "id": "5(VKFD$vAvM/4s0R`SSl",
+                                  "fields": {
+                                    "VAR": {
+                                      "id": "7rjL]qz@h^DWkHwLS{LA"
+                                    }
+                                  },
+                                  "inputs": {
+                                    "TEXT": {
+                                      "block": {
+                                        "type": "variable_get",
+                                        "id": "(X=U(UQAdWK^0xGcX+r1",
+                                        "fields": {
+                                          "VAR": {
+                                            "id": "E*V.[#4w6SMCIWVT]L$h"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "next": {
+                      "block": {
+                        "type": "file_writeline",
+                        "id": "NQ{x(FX|/{v|=`FE[L(w",
+                        "fields": {
+                          "VAR": {
+                            "id": "7rjL]qz@h^DWkHwLS{LA"
+                          }
+                        },
+                        "inputs": {
+                          "TEXT": {
+                            "block": {
+                              "type": "text",
+                              "id": "+hLt:U]3vt$8)/a[ne?X",
+                              "fields": {
+                                "TEXT": "Octarine"
+                              }
+                            }
+                          }
+                        },
+                        "next": {
+                          "block": {
+                            "type": "file_close",
+                            "id": "[}n}ovB~bbSm(RMKBe$*",
+                            "fields": {
+                              "VAR": {
+                                "id": "Gf0HV[oJmR7*x~3=|;Y{"
+                              }
+                            },
+                            "next": {
+                              "block": {
+                                "type": "file_close",
+                                "id": "=u0H:63JEiLB;QcjcXUP",
+                                "fields": {
+                                  "VAR": {
+                                    "id": "7rjL]qz@h^DWkHwLS{LA"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "variables": [
+    {
+      "name": "MyFile2",
+      "id": "7rjL]qz@h^DWkHwLS{LA"
+    },
+    {
+      "name": "subject",
+      "id": "tJ@*+W9)7_3OZ4!CDVK}"
+    },
+    {
+      "name": "MyFile",
+      "id": "Gf0HV[oJmR7*x~3=|;Y{"
+    },
+    {
+      "name": "thisLine",
+      "id": "E*V.[#4w6SMCIWVT]L$h"
+    },
+    {
+      "name": "variable",
+      "id": "-Mx#ms%O{VK]$[^?W#Dk"
+    }
+  ]
+}

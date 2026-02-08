@@ -1,0 +1,127 @@
+{
+  "blocks": {
+    "languageVersion": 0,
+    "blocks": [
+      {
+        "type": "comment_block",
+        "id": "t2Uxy9.RmQm2~I#aU$ic",
+        "x": 110,
+        "y": 90,
+        "fields": {
+          "TEXT": "this function squares a number"
+        },
+        "next": {
+          "block": {
+            "type": "function_def_var",
+            "id": "(*BB7T79{?:msc62Hf:g",
+            "fields": {
+              "NAME": "squared",
+              "PARAM": {
+                "id": "jo$TUNj/8zLY#q5W9yjO"
+              }
+            },
+            "inputs": {
+              "BODY": {
+                "block": {
+                  "type": "variable_assign",
+                  "id": "zAL:DcSB]-fr@0@m]ov0",
+                  "fields": {
+                    "VAR": {
+                      "id": "5LYvPvn[cv6A%f4ZP%4$"
+                    }
+                  },
+                  "inputs": {
+                    "VALUE": {
+                      "block": {
+                        "type": "math_exponent",
+                        "id": "t]z5]Brw|1fxEOk;tuLn",
+                        "inputs": {
+                          "A": {
+                            "block": {
+                              "type": "variable_get",
+                              "id": "i]{I)J}g1p~/{=N)Kr;V",
+                              "fields": {
+                                "VAR": {
+                                  "id": "jo$TUNj/8zLY#q5W9yjO"
+                                }
+                              }
+                            }
+                          },
+                          "B": {
+                            "block": {
+                              "type": "math_number",
+                              "id": "7=dG^nTF)GZbc.lN+awP",
+                              "fields": {
+                                "NUM": 2
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "RETURN": {
+                "block": {
+                  "type": "variable_get",
+                  "id": "ZUFNdqA!BzA/tvGEw%SG",
+                  "fields": {
+                    "VAR": {
+                      "id": "5LYvPvn[cv6A%f4ZP%4$"
+                    }
+                  }
+                }
+              }
+            },
+            "next": {
+              "block": {
+                "type": "comment_block",
+                "id": "hwXX%zswv($r!P$h^33B",
+                "fields": {
+                  "TEXT": "end of function"
+                },
+                "next": {
+                  "block": {
+                    "type": "print_statement",
+                    "id": "ve[jn-j$]O5CNUsl4D2H",
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "function_call",
+                          "id": "wg3_qmp9y02avd@K`Ya@",
+                          "fields": {
+                            "NAME": "squared",
+                            "ARGS": "3.16"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "variables": [
+    {
+      "name": "number",
+      "id": "jo$TUNj/8zLY#q5W9yjO"
+    },
+    {
+      "name": "squared",
+      "id": "5LYvPvn[cv6A%f4ZP%4$"
+    },
+    {
+      "name": "variable",
+      "id": "6NNup_a(EvnPgUVfwHK8"
+    },
+    {
+      "name": "param",
+      "id": "__SW|uI5U$gjn(9uR}Dc"
+    }
+  ]
+}
