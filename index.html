@@ -1190,7 +1190,7 @@
         jsGenerator.forBlock['global_variable'] = function(block) {
             const v = jsGenerator.nameDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
             const val = jsGenerator.valueToCode(block, 'VALUE', jsGenerator.ORDER_NONE) || '0';
-            return `window.${v} = ${val};\n`;
+            return `var ${v} = ${val};\n`;
         };
 
         jsGenerator.forBlock['input_statement'] = function(block) {
@@ -1431,7 +1431,7 @@
             const name = block.getFieldValue('NAME');
             const params = block.getFieldValue('PARAMS');
             const body = jsGenerator.statementToCode(block, 'BODY');
-            return `function ${name}(${params}) {\n${body}}\n`;
+            return `var ${name} = function(${params}) {\n${body}};\n`;
         };
         jsGenerator.forBlock['procedure_call'] = function(block) {
             return `${block.getFieldValue('NAME')}(${block.getFieldValue('ARGS')});\n`;
@@ -1441,7 +1441,7 @@
             const params = block.getFieldValue('PARAMS');
             const body = jsGenerator.statementToCode(block, 'BODY');
             const ret = jsGenerator.valueToCode(block, 'RETURN', jsGenerator.ORDER_NONE) || '0';
-            return `function ${name}(${params}) {\n${body}  return ${ret};\n}\n`;
+            return `var ${name} = function(${params}) {\n${body}  return ${ret};\n};\n`;
         };
         jsGenerator.forBlock['function_call'] = function(block) {
             return [`${block.getFieldValue('NAME')}(${block.getFieldValue('ARGS')})`, jsGenerator.ORDER_FUNCTION_CALL];
@@ -1451,7 +1451,7 @@
             const name = block.getFieldValue('NAME');
             const param = jsGenerator.nameDB_.getName(block.getFieldValue('PARAM'), Blockly.VARIABLE_CATEGORY_NAME);
             const body = jsGenerator.statementToCode(block, 'BODY');
-            return `function ${name}(${param}) {\n${body}}\n`;
+            return `var ${name} = function(${param}) {\n${body}};\n`;
         };
         jsGenerator.forBlock['procedure_call_var'] = function(block) {
             const arg = jsGenerator.valueToCode(block, 'ARG', jsGenerator.ORDER_NONE) || '0';
@@ -1462,7 +1462,7 @@
             const param = jsGenerator.nameDB_.getName(block.getFieldValue('PARAM'), Blockly.VARIABLE_CATEGORY_NAME);
             const body = jsGenerator.statementToCode(block, 'BODY');
             const ret = jsGenerator.valueToCode(block, 'RETURN', jsGenerator.ORDER_NONE) || '0';
-            return `function ${name}(${param}) {\n${body}  return ${ret};\n}\n`;
+            return `var ${name} = function(${param}) {\n${body}  return ${ret};\n};\n`;
         };
         jsGenerator.forBlock['function_call_var'] = function(block) {
             const arg = jsGenerator.valueToCode(block, 'ARG', jsGenerator.ORDER_NONE) || '0';
