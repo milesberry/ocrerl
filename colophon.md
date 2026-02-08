@@ -10,7 +10,7 @@ The project was built in a single extended session, evolving through rapid itera
 
 ### Starting Point
 
-The project began with a broken prototype, itself created by the Claude chatbot whilst Miles enjoyed Shakshouka and a chai latte in [Megan's by the Castle](https://megans.co.uk/locations/megans-by-the-castle/), Guildford. This was a Blockly-based editor that had stopped working due to an API change in Blockly v12. The initial task was simply to fix the error message: *"JavaScript generator does not know how to generate code for block type 'print_statement'"*. This turned out to be a namespace change in Blockly's generator API, where `Blockly.JavaScript` had been replaced by a separate module.
+The project began with a broken prototype, itself created by the Claude chatbot whilst Miles enjoyed shakshouka and a chai latte in [Megan's by the Castle](https://megans.co.uk/locations/megans-by-the-castle/), Guildford. This was a Blockly-based editor that had stopped working due to an API change in Blockly v12. The initial task was simply to fix the error message: *"JavaScript generator does not know how to generate code for block type 'print_statement'"*. This turned out to be a namespace change in Blockly's generator API, where `Blockly.JavaScript` had been replaced by a separate module.
 
 ### Feature Development
 
