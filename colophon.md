@@ -28,7 +28,7 @@ The bulk of the development time was spent on iterative refinement, driven by th
 
 - **Block variant strategy** -- a pattern emerged of providing both "literal" and "expression" versions of blocks (input, print, procedure/function definitions and calls). The literal versions are simpler for beginners; the expression versions accept plugged-in blocks for more advanced use.
 
-- **Bug fixing through use** -- several issues were caught through testing, including: `const` declarations causing redeclaration errors on re-run (fixed by generating `var` instead), procedure parameter fields creating spurious variables on every keystroke (fixed by debouncing variable creation), and Blockly's built-in operator blocks showing wrong symbols (`x` and `÷` instead of `*` and `/`).
+- **Bug fixing through use** -- several issues were caught through testing, including: `const` declarations causing redeclaration errors on re-run (fixed by generating `var` instead), procedure parameter fields creating spurious variables on every keystroke (fixed by debouncing variable creation), Blockly's built-in operator blocks showing wrong symbols (`x` and `÷` instead of `*` and `/`), and global variables being invisible inside procedures and functions due to JavaScript function hoisting (fixed by changing function declarations to function expressions so definitions execute in order rather than being hoisted above variable assignments).
 
 Pro subscription usage limits were hit four times, with development resuming after the enforced, but appreciated, break.
 
@@ -37,6 +37,10 @@ Pro subscription usage limits were hit four times, with development resuming aft
 Program persistence was added through JSON download/upload using Blockly's built-in serialisation. An initial localStorage-based save/load system was built but then simplified down to just download and upload, keeping the interface clean.
 
 The virtual file system was extended to allow loading real text files into the VFS for programs to read, and downloading files that programs had written -- bridging the gap between the simulated file handling and actual files on the user's machine.
+
+### Example Programs
+
+Miles created a set of [example programs](examples/) to demonstrate the editor's capabilities and provide starting points for students. These are saved as JSON files that can be uploaded into the editor.
 
 ## Technical Architecture
 
