@@ -176,11 +176,22 @@
                                                   "inputs": {
                                                     "A": {
                                                       "block": {
-                                                        "type": "variable_get",
-                                                        "id": "G1}W5RvU0;)vQX0aTk8:",
+                                                        "type": "type_cast",
+                                                        "id": ",Q7ZFEAWp*4v$k;Xx^ZF",
                                                         "fields": {
-                                                          "VAR": {
-                                                            "id": "9%voa}is5SDJ)5YG|pT{"
+                                                          "TYPE": "STR"
+                                                        },
+                                                        "inputs": {
+                                                          "VALUE": {
+                                                            "block": {
+                                                              "type": "variable_get",
+                                                              "id": "G1}W5RvU0;)vQX0aTk8:",
+                                                              "fields": {
+                                                                "VAR": {
+                                                                  "id": "9%voa}is5SDJ)5YG|pT{"
+                                                                }
+                                                              }
+                                                            }
                                                           }
                                                         }
                                                       }
@@ -201,11 +212,22 @@
                                                           },
                                                           "B": {
                                                             "block": {
-                                                              "type": "variable_get",
-                                                              "id": "~?.cSB-X}^gI.k$IbzbK",
+                                                              "type": "type_cast",
+                                                              "id": "t0cA55QDU=yt*nEw}LrN",
                                                               "fields": {
-                                                                "VAR": {
-                                                                  "id": "cwzG8z{uM`mL.rrLSwj+"
+                                                                "TYPE": "STR"
+                                                              },
+                                                              "inputs": {
+                                                                "VALUE": {
+                                                                  "block": {
+                                                                    "type": "variable_get",
+                                                                    "id": "~?.cSB-X}^gI.k$IbzbK",
+                                                                    "fields": {
+                                                                      "VAR": {
+                                                                        "id": "cwzG8z{uM`mL.rrLSwj+"
+                                                                      }
+                                                                    }
+                                                                  }
                                                                 }
                                                               }
                                                             }
@@ -357,7 +379,7 @@
                                           "type": "text",
                                           "id": "kop/kf4}!uNV/6=i.0Mq",
                                           "fields": {
-                                            "TEXT": "Think again."
+                                            "TEXT": "Think again"
                                           }
                                         }
                                       }
