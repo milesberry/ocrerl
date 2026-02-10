@@ -315,6 +315,7 @@
                     name: 'Variables',
                     colour: COLOURS.VARIABLES,
                     contents: [
+                        { kind: 'button', text: 'Create variable...', callbackKey: 'CREATE_VARIABLE' },
                         { kind: 'block', type: 'variable_assign' },
                         { kind: 'block', type: 'variable_get' },
                         { kind: 'block', type: 'constant_declare' },
@@ -1777,6 +1778,16 @@
                     length: 3,
                     colour: '#ccc',
                     snap: true
+                }
+            });
+
+            workspace.registerButtonCallback('CREATE_VARIABLE', function() {
+                const name = prompt('New variable name:');
+                if (name && name.trim()) {
+                    const trimmed = name.trim();
+                    if (!workspace.getVariable(trimmed)) {
+                        workspace.createVariable(trimmed);
+                    }
                 }
             });
 
