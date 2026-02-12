@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCR Exam Reference Language - Blockly Edition</title>
-    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
-    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <script src="lib/blockly.min.js"></script>
+    <script>if (typeof Blockly === 'undefined') document.write('<script src="https://unpkg.com/blockly/blockly.min.js"><\/script>');</script>
+    <script src="lib/javascript_compressed.js"></script>
+    <script>if (typeof Blockly === 'undefined' || !Blockly.JavaScript) document.write('<script src="https://unpkg.com/blockly/javascript_compressed.js"><\/script>');</script>
     <style>
         body {
             margin: 0;
@@ -1996,6 +1998,10 @@
         function uploadProgram(event) {
             const file = event.target.files[0];
             if (!file) return;
+            if (!workspace) {
+                alert('Blockly has not loaded. Your school network may be blocking the required scripts. Please ask your IT team to allow access to unpkg.com, or use a device without network restrictions.');
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
